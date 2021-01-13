@@ -6,6 +6,14 @@
 #include <assert.h>
 
 namespace ECS {
+	// Declare the ComponentContainer upfront, such that we can define the registry and use it in the Entity class definition
+	template <typename Component> // A template class, the Component can be any class
+	class ComponentContainer;
+
+	// Instanciate one component container for each desired class
+	template<class Component> // this is a variable template (c++14) that is created once per class and ECS instance https://en.cppreference.com/w/cpp/language/variable_template
+	ComponentContainer<Component> registry;
+
 	// Unique identifyer for all entities
 	struct Entity
 	{
@@ -17,6 +25,12 @@ namespace ECS {
 
 		// The ID defines an entity
 		unsigned int id;
+
+		template<class Component>
+		void insert(Component&& c)
+		{
+			registry<Component>.insert(*this, std::move(c));
+		};
 	private:
 		
 		// yields ids from 1; entity 0 is the default initialization
@@ -149,8 +163,4 @@ namespace ECS {
 			return components.size();
 		}
 	};
-
-	// Instanciate one component container for each desired class
-	template<class Component> // this is a variable template (c++14) that is created once per class and ECS instance https://en.cppreference.com/w/cpp/language/variable_template
-	ComponentContainer<Component> registry;
 }
