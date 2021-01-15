@@ -20,12 +20,14 @@ void ContainerInterface::clear_all_components() {
     }
 }
 void ContainerInterface::list_all_components() {
-	std::cout << "Debug info on all regestry entries:\n";
+	std::cout << "Debug info on all registry entries:\n";
 	const auto& singleton = registry_list_singleton();
 	for (auto reg : singleton) {
         assert(reg); // Must not be null
 		if (reg->size() > 0) {
-			std::cout << reg->size() << " components of type" << typeid(*reg).name() << '\n';
+			std::cout
+                << "  " << reg->size() << " components of type "
+                << typeid(*reg).name() << "\n    ";
 			for (auto entity : reg->entities) {
 				std::cout << entity.id << ", ";
             }
@@ -39,7 +41,9 @@ void ContainerInterface::list_all_components_of(Entity e) {
 	for (auto reg : registry_list_singleton()) {
         assert(reg); // Must not be null
 		if (reg->has(e)) {
-			std::cout << "type" << typeid(*reg).name() << ", stored at location " << reg->map_entity_component_index[e.id] << '\n';
+			std::cout
+                << "  type " << typeid(*reg).name() << ", stored at location "
+                << reg->map_entity_component_index[e.id] << '\n';
         }
     }
 }

@@ -3,7 +3,7 @@
 #include <vector>
 #include <unordered_map>
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 
 namespace ECS {
 	// Declare the ComponentContainer upfront, such that we can define the registry and use it in the Entity class definition
@@ -26,10 +26,10 @@ namespace ECS {
 		// The ID defines an entity
 		unsigned int id;
 
+		// An example wrapper
 		template<class Component>
-		void insert(Component&& c)
-		{
-			registry<Component>.insert(*this, std::move(c));
+		void insert(Component c) {
+			registry<Component>.insert(*this, c);
 		};
 	private:
 		
@@ -76,9 +76,21 @@ namespace ECS {
 			auto& singleton = registry_list_singleton();
 			singleton.push_back(this);
 		}
+		// Destructor that frees memory from the singleton vector
+        ~ComponentContainer()
+        {
+            auto& singleton = registry_list_singleton();
+            auto it = find(begin(singleton), end(singleton), this);
+            assert(it != end(singleton));
+			singleton.erase(it);
+        }
+
+		// Disable copy operators
+        ComponentContainer(const ComponentContainer&) = delete;
+        ComponentContainer& operator=(const ComponentContainer&) = delete;
 
 		// Inserting a component c associated to entity e
-		inline Component& insert(Entity e, Component&& c, bool check_for_duplicates = true)
+		inline Component& insert(Entity e, Component c, bool check_for_duplicates = true)
 		{
 			// Usually, every entity should only have one instance of each component type
 			if (check_for_duplicates)
@@ -98,7 +110,7 @@ namespace ECS {
 		};
 		template<typename... Args>
 		Component& emplace_with_duplicates(Entity e, Args &&... args) {
-			return insert(e, Component(std::forward<Args>(args)...), false); // the forward ensures that arguments are moved not copied
+			return insert(e, Component(std::forward<Args>(args)...), false);
 		};
 
 		// A wrapper to return the component of an entity
@@ -134,7 +146,7 @@ namespace ECS {
 			entities.pop_back();
 		};
 
-		// Sort the components and associated entity assignment structures by the comparisonFunction that compares the order of two entities
+		// Sort the components and associated entity assignment structures by the comparisonFunction that compares the order of two entities, see std::sort
 		template <class Compare>
 		void sort(Compare comparisonFunction)
 		{

@@ -1,5 +1,6 @@
 #include "tinyECS/tiny_ecs.hpp"
 #include <string>
+#include <iostream>
 
 ///////////////////////////
 // OOP inheritance pattern
@@ -72,10 +73,16 @@ int main(int argc, char* argv[])
 	animals_oop.push_back(static_cast<LandAnimalOOP*>(&turtle_oop)); // WARNING: this compiles, but now the turtle is not able to swim!
 	
 	// Print the names and abilities of all animals
-	printf("----- OOP inheritance debug output -----\n");
-	for (AnimalOOP* animal : animals_oop)
-		printf("%s: can swim %d and can walk %d\n", animal->name().c_str(), animal->canDive(), animal->canWalk());
+	std::cout << "----- OOP inheritance debug output -----\n";
+	for (AnimalOOP* animalPtr : animals_oop) {
+        assert(animalPtr);
+        auto& theAnimal = *animalPtr; // NOTE: reference is needed for virtual function calls
+        std::cout
+            << theAnimal.name() << ' '
+            << (theAnimal.canDive() ? "can" : "can't") << " swim and "
+            << (theAnimal.canWalk() ? "can" : "can't") << " walk" << std::endl;
 		// This is not what we want, our OOP turtle can't swim :/
+    }
 
 	//////////////////////////
 	// ECS pattern
@@ -104,12 +111,13 @@ int main(int argc, char* argv[])
 	// Note, no need to define fish, horse, and turtle classed, they are formed by the equipped components!
 
 	// Print the names and abilities of all animals
-	printf("----- ECS debug output -----\n");
-	for (ECS::Entity& animal : ECS::registry<Animal>.entities)
-		printf("%s: can swim %d and can walk %d\n",
-			ECS::registry<Animal>.get(animal).name.c_str(),
-			ECS::registry<WaterAnimal>.has(animal),
-			ECS::registry<LandAnimal>.has(animal));
+	std::cout << "----- ECS debug output -----\n";
+	for (ECS::Entity& animal : ECS::registry<Animal>.entities) {
+        std::cout
+            << ECS::registry<Animal>.get(animal).name << ' '
+            << (ECS::registry<WaterAnimal>.has(animal) ? "can" : "can't") << " swim and "
+            << (ECS::registry<LandAnimal>.has(animal) ? "can" : "can't") << " walk" << std::endl;
+    }
 
 	// Inspect the ECS state
 	ECS::ContainerInterface::list_all_components();
