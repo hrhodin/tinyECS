@@ -4,6 +4,6 @@
 *.bin
 *.sln
 *.vcxproj
-
+*.vs*
 *build*
 .vscode

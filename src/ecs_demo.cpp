@@ -11,7 +11,7 @@ struct AnimalOOP {
 };
 
 struct WaterAnimalOOP : public AnimalOOP {
-	float swim_speed = 3;
+	float swim_speed = 2;
 	bool canDive() { return true; };
 	bool canWalk() { return false; };
 };
@@ -24,7 +24,7 @@ struct LandAnimalOOP : public AnimalOOP {
 
 struct FishOOP : public WaterAnimalOOP
 {
-	virtual std::string name() {return "Fish";};
+	virtual std::string name() { return "Fish"; };
 };
 
 struct HorseOOP : public LandAnimalOOP
@@ -34,23 +34,71 @@ struct HorseOOP : public LandAnimalOOP
 
 struct TurtleOOP : public LandAnimalOOP, WaterAnimalOOP
 {
-	virtual std::string name() {return "Turtle";};
+	virtual std::string name() { return "Turtle"; };
 };
 
 /////////////////////////////////////////
 // Entity Component System (ECS) pattern
-struct Animal {
+struct Name {
 	std::string name;
-	Animal(const char* str) : name(str) {};
+	Name(const char* str) : name(str) {};
 };
 
-struct WaterAnimal {
+struct Swims {
 	float swim_speed = 3;
 };
 
-struct LandAnimal {
-	float walk_speed = 3;
+struct Walks {
+	float walk_speed = 2;
 };
+
+// Setup ECS
+class RegistryECS
+{
+	// Callbacks to remove a particular or all entities in the system
+	std::vector<ContainerInterface*> registry_list;
+
+public:
+	// Manually created list of all components this game has
+	ComponentContainer<Name> names;
+	ComponentContainer<Swims> swims;
+	ComponentContainer<Walks> walks;
+
+	// constructor that adds all containers for looping over them
+	// IMPORTANT: Don't forget to add any newly added containers!
+	RegistryECS()
+	{
+		registry_list.push_back(&names);
+		registry_list.push_back(&swims);
+		registry_list.push_back(&walks);
+	}
+
+	void clear_all_components() {
+		for (ContainerInterface* reg : registry_list)
+			reg->clear();
+	}
+
+	void list_all_components() {
+		printf("Debug info on all regestry entries:\n");
+		for (ContainerInterface* reg : registry_list)
+			if (reg->size() > 0)
+				printf("%4d components of type %s\n", (int)reg->size(), typeid(*reg).name());
+	}
+
+	void list_all_components_of(Entity e) {
+		printf("Debug info on components of entity %u:\n", (unsigned int)e);
+		for (ContainerInterface* reg : registry_list)
+			if (reg->has(e))
+				printf("type %s\n", typeid(*reg).name());
+	}
+
+	void remove_all_components_of(Entity e) {
+		for (ContainerInterface* reg : registry_list)
+			reg->remove(e);
+	}
+};
+
+RegistryECS registry;
 
 /////////////////////////////////////////
 // Entry point
@@ -87,44 +135,44 @@ int main(int argc, char* argv[])
 	//////////////////////////
 	// ECS pattern
 	// Create a fish
-	ECS::Entity fish;
-	ECS::registry<Animal>.insert(fish, Animal("Fish"));
-	ECS::registry<WaterAnimal>.insert(fish, WaterAnimal());
+	Entity fish;
+	registry.names.insert(fish, Name("Fish"));
+	registry.swims.insert(fish, Swims());
 
 	// Create a horse
-	ECS::Entity horse;
-	ECS::registry<Animal>.emplace(horse, "Horse"); // Note, emplace() does the same as insert() but is shorter
-	ECS::registry<LandAnimal>.emplace(horse);
+	Entity horse;
+	registry.names.emplace(horse, "Horse"); // Note, emplace() does the same as insert() but is shorter
+	registry.walks.emplace(horse);
 
 	// Create a turtle
-	ECS::Entity turtle;
-	ECS::registry<Animal>.emplace(turtle, "Turtle");
-	ECS::registry<LandAnimal>.emplace(turtle);
-	ECS::registry<WaterAnimal>.emplace(turtle);
+	Entity turtle;
+	registry.names.emplace(turtle, "Turtle");
+	registry.walks.emplace(turtle);
+	registry.swims.emplace(turtle);
 
-	// WARNING: Common mistake! The following code will not change the animal's name, because we copy animal before updating it
-	// One has to work with references or pointers instead. Correct it to create a Big Fish.
-	Animal animal = ECS::registry<Animal>.get(fish);
-	animal.name = "Big " + animal.name;
+	// WARNING: Common mistake! The following code will not change the animal's name, because we copy fish_name before updating it
+	// One has to work with references or pointers instead. TODO: Correct it with one of these to create a "Big Fish".
+	Name fish_name = registry.names.get(fish);
+	fish_name.name = "Big " + fish_name.name;
 
-	// Note, no need to group animals, its automatic in ECS!
+	// Note, no need to group animals, the tinyECS registry has all the components in a list automatically!
 	// Note, no need to define fish, horse, and turtle classed, they are formed by the equipped components!
 
-	// Print the names and abilities of all animals
+	// Print the names and abilities of all the animals
 	std::cout << "----- ECS debug output -----\n";
-	for (ECS::Entity& animal : ECS::registry<Animal>.entities) {
+	for (Entity& animal : registry.names.entities) {
         std::cout
-            << ECS::registry<Animal>.get(animal).name << ' '
-            << (ECS::registry<WaterAnimal>.has(animal) ? "can" : "can't") << " swim and "
-            << (ECS::registry<LandAnimal>.has(animal) ? "can" : "can't") << " walk" << std::endl;
+            << registry.names.get(animal).name << ' '
+            << (registry.swims.has(animal) ? "can" : "can't") << " swim and "
+            << (registry.walks.has(animal) ? "can" : "can't") << " walk" << std::endl;
     }
 
 	// Inspect the ECS state
-	ECS::ContainerInterface::list_all_components();
-	ECS::ContainerInterface::list_all_components_of(turtle);
+	registry.list_all_components();
+	registry.list_all_components_of(turtle);
 
 	// Clearing the ECS system before exit
-	ECS::ContainerInterface::clear_all_components();
+	registry.clear_all_components();
 	return EXIT_SUCCESS;
 }
 
