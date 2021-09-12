@@ -79,7 +79,7 @@ public:
 	}
 
 	void list_all_components() {
-		printf("Debug info on all regestry entries:\n");
+		printf("Debug info on all registry entries:\n");
 		for (ContainerInterface* reg : registry_list)
 			if (reg->size() > 0)
 				printf("%4d components of type %s\n", (int)reg->size(), typeid(*reg).name());
