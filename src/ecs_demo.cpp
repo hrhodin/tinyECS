@@ -151,7 +151,7 @@ int main(int argc, char* argv[])
 	registry.swims.emplace(turtle);
 
 	// WARNING: Common mistake! The following code will not change the animal's name, because we copy fish_name before updating it
-	// One has to work with references or pointers instead. TODO: Correct it with one of these to create a "Big Fish".
+	// One has to work with references or pointers instead
 	Name fish_name = registry.names.get(fish);
 	fish_name.name = "Big " + fish_name.name;
 
