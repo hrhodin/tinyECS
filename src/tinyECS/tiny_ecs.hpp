@@ -21,7 +21,7 @@ struct ContainerInterface
     virtual void clear() = 0;
     virtual std::size_t size() = 0;
     virtual void remove(Entity e) = 0;
-    virtual bool has(Entity entity) = 0;
+    virtual bool has(Entity e) = 0;
 };
 
 // A container that stores components of type 'Component' and associated entities
@@ -74,8 +74,8 @@ public:
     }
 
     // Check if entity has a component of type 'Component'
-    bool has(Entity entity) {
-        return map_entity_componentID.count(entity) > 0;
+    bool has(Entity e) {
+        return map_entity_componentID.count(e) > 0;
     }
 
     // Remove an component and pack the container to re-use the empty space
