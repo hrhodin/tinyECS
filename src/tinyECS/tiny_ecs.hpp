@@ -47,24 +47,27 @@ public:
     // Inserting a component c associated to entity e
     inline Component& insert(Entity e, Component c, bool check_for_duplicates = true)
     {
-        // Usually, every entity should only have one instance of each component type
-        assert(!(check_for_duplicates && has(e)) && "Entity already contained in ECS registry");
-
-
-        map_entity_componentID[e] = (unsigned int)components.size();
-        components.push_back(std::move(c)); // the move enforces move instead of copy constructor
-        entities.push_back(e);
-        return components.back();
+        if (check_for_duplicates) {
+            return emplace(e, std::move(c)); // the move enforces move instead of copy constructor)
+        } else {
+            return emplace_with_duplicates(e, std::move(c)); // the move enforces move instead of copy constructor)
+        }
     };
 
     // The emplace function takes the the provided arguments Args, creates a new object of type Component, and inserts it into the ECS system
     template<typename... Args>
     Component& emplace(Entity e, Args &&... args) {
-        return insert(e, Component(std::forward<Args>(args)...)); // the forward ensures that arguments are moved not copied
+        // Usually, every entity should only have one instance of each component type
+        assert(!has(e) && "Entity already contained in ECS registry");
+        return emplace_with_duplicates(e, std::forward<Args>(args)...); // the forward ensures that arguments are moved not copied
     };
+
     template<typename... Args>
     Component& emplace_with_duplicates(Entity e, Args &&... args) {
-        return insert(e, Component(std::forward<Args>(args)...), false); // the forward ensures that arguments are moved not copied
+        map_entity_componentID[e] = (unsigned int)components.size();
+        components.emplace_back(std::forward<Args>(args)...); // the forward ensures that arguments are moved not copied
+        entities.push_back(e);
+        return components.back();
     };
 
     // A wrapper to return the component of an entity
