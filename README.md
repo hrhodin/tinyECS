@@ -64,7 +64,7 @@ The corresponding output is
 Fish: can swim 1 and can walk 0
 Horse: can swim 0 and can walk 1
 Turtle: can swim 1 and can walk 1
-Debug info on all regestry entries:
+Debug info on all registry entries:
    3 components of type class ECS::ComponentContainer<struct Animal>
    2 components of type class ECS::ComponentContainer<struct WaterAnimal>
    2 components of type class ECS::ComponentContainer<struct LandAnimal>
@@ -128,7 +128,7 @@ int main(int argc, char* argv[])
 	animals_oop.push_back(&fish_oop);
 	animals_oop.push_back(&horse_oop);
 	//animals_oop.push_back(&turtle_oop); 
-	// ERROR: the base class is ambigious, 
+	// ERROR: the base class is ambiguous, 
 	// see https://stackoverflow.com/questions/44878627/inheritance-causes-ambiguous-conversion
 	
 	animals_oop.push_back(static_cast<LandAnimalOOP*>(&turtle_oop)); 

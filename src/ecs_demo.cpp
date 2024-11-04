@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 	std::vector<AnimalOOP*> animals_oop;
 	animals_oop.push_back(&fish_oop);
 	animals_oop.push_back(&horse_oop);
-	//animals_oop.push_back(&turtle_oop); // ERROR: the base class is ambigious, see mroe here: https://stackoverflow.com/questions/44878627/inheritance-causes-ambiguous-conversion
+	//animals_oop.push_back(&turtle_oop); // ERROR: the base class is ambiguous, see more here: https://stackoverflow.com/questions/44878627/inheritance-causes-ambiguous-conversion
 	animals_oop.push_back(static_cast<LandAnimalOOP*>(&turtle_oop)); // WARNING: this compiles, but now the turtle is not able to swim!
 	
 	// Print the names and abilities of all animals
