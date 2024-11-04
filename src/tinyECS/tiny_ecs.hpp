@@ -19,7 +19,7 @@ public:
 struct ContainerInterface
 {
     virtual void clear() = 0;
-    virtual size_t size() = 0;
+    virtual std::size_t size() = 0;
     virtual void remove(Entity e) = 0;
     virtual bool has(Entity entity) = 0;
 };
@@ -109,7 +109,7 @@ public:
     }
 
     // Report the number of components of type 'Component'
-    size_t size()
+    std::size_t size()
     {
         return components.size();
     }
