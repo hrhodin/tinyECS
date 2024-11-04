@@ -81,23 +81,22 @@ public:
     // Remove an component and pack the container to re-use the empty space
     void remove(Entity e)
     {
-        if (has(e))
-        {
-            // Get the current position
-            int cID = map_entity_componentID[e];
+        if (!has(e)) return;
 
-            // Move the last element to position cID using the move operator
-            // Note, components[cID] = components.back() would trigger the copy instead of move operator
-            components[cID] = std::move(components.back());
-            entities[cID] = entities.back(); // the entity is only a single index, copy it.
-            map_entity_componentID[entities.back()] = cID;
+        // Get the current position
+        int cID = map_entity_componentID[e];
 
-            // Erase the old component and free its memory
-            map_entity_componentID.erase(e);
-            components.pop_back();
-            entities.pop_back();
-            // Note, one could mark the id for re-use
-        }
+        // Move the last element to position cID using the move operator
+        // Note, components[cID] = components.back() would trigger the copy instead of move operator
+        components[cID] = std::move(components.back());
+        entities[cID] = entities.back(); // the entity is only a single index, copy it.
+        map_entity_componentID[entities.back()] = cID;
+
+        // Erase the old component and free its memory
+        map_entity_componentID.erase(e);
+        components.pop_back();
+        entities.pop_back();
+        // Note, one could mark the id for re-use
     };
 
     // Remove all components of type 'Component'
