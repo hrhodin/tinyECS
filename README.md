@@ -156,9 +156,11 @@ You can also use `FetchContent` to include the library in  your CMake project:
 FetchContent_Declare(
     tinyECS
     GIT_REPOSITORY https://github.com/hrhodin/tinyECS.git
-    GIT_SHALLOW TRUE
-    GIT_PROGRESS TRUE
+    GIT_TAG        main
+    GIT_SHALLOW    TRUE
+    GIT_PROGRESS   TRUE
     EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(tinyECS)
 ```
+
