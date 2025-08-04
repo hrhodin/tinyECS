@@ -1,4 +1,4 @@
-#include "tinyECS/tiny_ecs.hpp"
+#include "tiny_ecs.hpp"
 #include <string>
 #include <iostream>
 
