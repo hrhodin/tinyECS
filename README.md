@@ -151,3 +151,14 @@ Note, the turtle is erroneously reported to not being a swimmer.
 ### Compilation
 
 Use CMake 3.6 or later to generate platform-independent code or copy-paste the `tiny_ecs.hpp` and `tiny_ecs.cpp` directly to your project.
+You can also use `FetchContent` to include the library in  your CMake project:
+```cmake
+FetchContent_Declare(
+    tinyECS
+    GIT_REPOSITORY https://github.com/hrhodin/tinyECS.git
+    GIT_SHALLOW TRUE
+    GIT_PROGRESS TRUE
+    EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(tinyECS)
+```
