@@ -52,7 +52,7 @@ public:
         } else {
             return emplace_with_duplicates(e, std::move(c)); // the move enforces move instead of copy constructor)
         }
-    };
+    }
 
     // The emplace function takes the the provided arguments Args, creates a new object of type Component, and inserts it into the ECS system
     template<typename... Args>
@@ -60,7 +60,7 @@ public:
         // Usually, every entity should only have one instance of each component type
         assert(!has(e) && "Entity already contained in ECS registry");
         return emplace_with_duplicates(e, std::forward<Args>(args)...); // the forward ensures that arguments are moved not copied
-    };
+    }
 
     template<typename... Args>
     Component& emplace_with_duplicates(Entity e, Args &&... args) {
@@ -68,7 +68,7 @@ public:
         components.emplace_back(std::forward<Args>(args)...); // the forward ensures that arguments are moved not copied
         entities.push_back(e);
         return components.back();
-    };
+    }
 
     // A wrapper to return the component of an entity
     Component& get(Entity e) {
@@ -100,7 +100,7 @@ public:
         components.pop_back();
         entities.pop_back();
         // Note, one could mark the id for re-use
-    };
+    }
 
     // Remove all components of type 'Component'
     void clear()
