@@ -12,7 +12,8 @@ class Entity
 public:
     // Note, indices of already deleted entities aren't re-used in this simple implementation.
     Entity() : id(id_count++) {}
-    operator unsigned int() { return id; } // this enables automatic casting to int
+    operator unsigned int() const { return id; } // this enables automatic casting to int
+    inline bool operator==(const Entity& other) const { return id == other.id; } // enables comparison of entities
 };
 
 // Common interface to refer to all containers in the ECS registry
