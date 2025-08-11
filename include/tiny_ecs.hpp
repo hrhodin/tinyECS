@@ -20,9 +20,9 @@ public:
 struct ContainerInterface
 {
     virtual void clear() = 0;
-    virtual std::size_t size() = 0;
+    virtual std::size_t size() const = 0;
     virtual void remove(Entity e) = 0;
-    virtual bool has(Entity e) = 0;
+    virtual bool has(Entity e) const = 0;
 };
 
 // A container that stores components of type 'Component' and associated entities
@@ -77,8 +77,13 @@ public:
         return components[map_entity_componentID[e]];
     }
 
+    const Component& get(Entity e) const {
+        assert(has(e) && "Entity not contained in ECS registry");
+        return components[map_entity_componentID.at(e)];
+    }
+
     // Check if entity has a component of type 'Component'
-    bool has(Entity e) {
+    bool has(Entity e) const {
         return map_entity_componentID.count(e) > 0;
     }
 
@@ -112,7 +117,7 @@ public:
     }
 
     // Report the number of components of type 'Component'
-    std::size_t size()
+    std::size_t size() const
     {
         return components.size();
     }
